@@ -361,6 +361,60 @@ p {
 .writing-preview {
   padding: 24px 0;
 }
+.credential-groups {
+  display: grid;
+  gap: 48px;
+  margin-top: 32px;
+}
+.credential-groups h3 {
+  font-size: 21px;
+  margin-bottom: 16px;
+}
+.credential-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  column-gap: 32px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.credential-list li {
+  min-width: 0;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+.credential-list h4 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.credential-list p {
+  margin: 0;
+}
+.credential-issuer,
+.credential-dates,
+.credential-note {
+  color: var(--muted);
+  font-size: 14px;
+}
+.featured-credentials {
+  margin: 24px 0;
+}
+.featured-credentials h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.featured-credentials ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.featured-credentials li + li {
+  margin-top: 6px;
+}
 .writing-preview h3 {
   font-size: 25px;
 }
@@ -604,4 +658,17 @@ p {
   *::after {
     transition: none !important;
   }
+}
+
+.credential-background summary {
+  cursor: pointer;
+  color: var(--accent);
+  padding: 12px 0;
+}
+.credential-background summary:hover {
+  text-decoration: underline;
+}
+.credential-background summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }

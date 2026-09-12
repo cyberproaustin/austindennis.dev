@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/ui";
 import { CloudExpertise } from "@/components/cloud-expertise";
+import { CertificationList } from "@/components/certifications";
 export const metadata: Metadata = { title: "Cloud expertise" };
 export default function Expertise() {
   return (
@@ -15,17 +16,13 @@ export default function Expertise() {
         </p>
       </PageIntro>
       <CloudExpertise />
-      <section className="home-section prose">
-        <h2>Certifications support the work.</h2>
+      <section className="home-section" aria-labelledby="credentials-heading">
+        <h2 id="credentials-heading">Certifications and credentials</h2>
         <p>
-          Credentials belong alongside hands-on systems, design decisions, and
-          operational lessons. Verified certifications will appear here grouped
-          by cloud, with earned, in progress, or planned status.
+          Cloud architecture, secure delivery, and the foundations behind the
+          work.
         </p>
-        <p className="notice">
-          Certification details pending. No completed credentials have been
-          supplied.
-        </p>
+        <CertificationList />
       </section>
     </>
   );
