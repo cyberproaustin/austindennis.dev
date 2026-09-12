@@ -27,7 +27,19 @@ describe("credential presentation", () => {
     expect(html).not.toContain("Associate CCSP");
     expect(html).not.toContain("Thinkful");
     expect(html).not.toContain("MSSP");
-    expect(html).not.toContain("Verify credential");
+    expect(html.match(/>Verify credential/g)).toHaveLength(24);
+    for (const credential of certifications) {
+      if (credential.credentialUrl) {
+        expect(new URL(credential.credentialUrl).protocol).toBe("https:");
+        expect(credential.credentialUrl).not.toContain("linkedin.com/safety");
+        expect(html).toContain(`href="${credential.credentialUrl}"`);
+      }
+    }
+    expect(
+      certifications
+        .filter((entry) => !entry.credentialUrl)
+        .map((entry) => entry.id),
+    ).toEqual(["tenable-cloud", "linux"]);
     expect(html).not.toContain("details pending");
     const featured = renderToStaticMarkup(<FeaturedCertifications />);
     expect(featured.match(/<li>/g)).toHaveLength(3);
