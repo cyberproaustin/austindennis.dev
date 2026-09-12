@@ -1,13 +1,4 @@
 export type Cloud = "Microsoft Azure" | "Amazon Web Services" | "Google Cloud";
-export type Certification = {
-  name: string;
-  cloud: Cloud;
-  status: "earned" | "in progress" | "planned";
-  earnedOn?: string;
-  credentialUrl?: string;
-};
-// Add only owner-confirmed certifications. An empty list intentionally makes no credential claims.
-export const certifications: Certification[] = [];
 export const clouds: { name: Cloud; label: string; description: string }[] = [
   {
     name: "Microsoft Azure",

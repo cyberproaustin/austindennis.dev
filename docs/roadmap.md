@@ -26,7 +26,9 @@ Updated at the close of the September 10–11, 2026 session. The initial local m
 - [x] Complete TerraLift’s source-backed case study with implementation limits.
 - [x] Complete the SAST engine case study and proposed DevSecOps platform roadmap.
 - [x] Complete Bank Vault Academy’s public-safe case study, including solo ownership and real users.
-- [ ] Add confirmed certification records and further biography when supplied.
+- [x] Add 26 owner-supplied credentials, grouped on Expertise, with three featured certifications on the homepage. Exclude the expired Tenable MSSP and Thinkful entries.
+- [ ] Add credential verification URLs when supplied.
+- [ ] Add further biography when supplied.
 - [ ] Add a public email link only if requested; Git author configuration is separate.
 - [ ] Publish the first technical article.
 - [ ] Keep case studies aligned with future implementation and release changes.

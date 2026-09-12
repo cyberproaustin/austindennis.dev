@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ProjectCard } from "@/components/project-card";
 import { CloudExpertise } from "@/components/cloud-expertise";
 import { SectionHeading } from "@/components/ui";
+import { FeaturedCertifications } from "@/components/certifications";
 import { projects } from "@/content/projects";
 
 export default function Home() {
@@ -91,6 +92,7 @@ export default function Home() {
         <section id="expertise" className="home-section">
           <SectionHeading title="Cloud expertise" />
           <CloudExpertise />
+          <FeaturedCertifications />
           <Link className="text-link" href="/expertise/">
             Experience and learning <span aria-hidden="true">→</span>
           </Link>
