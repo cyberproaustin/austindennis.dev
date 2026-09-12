@@ -1,5 +1,17 @@
 # Terraform foundation
 
+## Agreed deployment settings
+
+- Budget notification email: `cyberproaustin@gmail.com`.
+- Monthly portfolio budget: USD 5, filtered by the activated cost allocation tag `Project=austindennis-dev` across regions.
+- Monthly account budget: USD 50, covering all account spending, including the portfolio.
+- Planned actual-spend notifications: 50%, 80%, and 100% of each budget, plus a forecast notification at 100%.
+- Budgets notify about spending; they do not enforce spending caps. Untagged and unallocated charges remain covered by the account budget.
+- AWS account and authentication are pending. No budgets have been created yet.
+- Proposed deployment region: `us-east-1`, with development kept local initially.
+
+## Current implementation
+
 No AWS resources, providers, or backend are configured. Both environments only declare Terraform compatibility. This is intentionally a no-op foundation, not production infrastructure.
 
 ```sh

@@ -1,0 +1,113 @@
+name: Deploy portfolio
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-${{ github.sha }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+
+    env:
+      AWS_REGION: us-east-1
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: portfolio-${{ github.sha }}
+          path: out/
+
+      - name: Verify deployment inputs
+        run: |
+          test -n "$SITE_BUCKET"
+          test -n "$DISTRIBUTION_ID"
+          test -f out/index.html
+          test -f out/404.html
+          test -d out/_next/static
+
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+          allowed-account-ids: "521595302924"
+          role-session-name: portfolio-${{ github.run_id }}
+
+      - name: Upload hashed assets
+        run: |
+          aws s3 cp out/_next/static/ \
+            "s3://$SITE_BUCKET/_next/static/" \
+            --recursive \
+            --cache-control "public,max-age=31536000,immutable" \
+            --only-show-errors
+
+      - name: Upload supporting files
+        run: |
+          aws s3 cp out/ "s3://$SITE_BUCKET/" \
+            --recursive \
+            --exclude "_next/static/*" \
+            --exclude "*.html" \
+            --cache-control "public,max-age=0,must-revalidate" \
+            --only-show-errors
+
+      - name: Upload HTML
+        run: |
+          aws s3 cp out/ "s3://$SITE_BUCKET/" \
+            --recursive \
+            --exclude "*" \
+            --include "*.html" \
+            --cache-control "public,max-age=0,must-revalidate" \
+            --only-show-errors
+
+      - name: Invalidate CloudFront and wait
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --id "$INVALIDATION_ID"

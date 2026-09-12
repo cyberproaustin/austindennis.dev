@@ -6,6 +6,16 @@ This repository contains the application and infrastructure supporting austinden
 
 No open-source license is granted. Public visibility does not imply general permission to reuse the work.
 
+## Current status
+
+The initial local milestone is implemented and committed as `1c63214`. Austin reviewed the site at the end of the September 10–11, 2026 session. The portfolio includes the homepage, About, Contact, cloud expertise, a draft-aware writing section, and three completed case studies:
+
+- **TerraLift:** source-backed architecture, migration tradeoffs, validation limits, and roadmap.
+- **SAST engine / DevSecOps Platform:** implemented analysis capabilities and a clearly separated proposed platform roadmap.
+- **Bank Vault Academy:** independently built and operated product, with real usage confirmed by the owner and sensitive implementation details excluded.
+
+The headshot, GitHub links, LinkedIn contact link, and Bank Vault Academy public website link are integrated. No certification claims or published articles have been invented. AWS deployment and GitHub publication have not happened.
+
 ## Local development
 
 Use Node.js 24 LTS (npm included). On macOS, if missing:
@@ -19,7 +29,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. Add the PATH line to your shell configuration if you want it to persist. `.nvmrc` is provided for developers who already use nvm. `npm install` also works; CI uses the committed lockfile with `npm ci`.
+Open http://localhost:3000. Restart the development server after moving route directories or changing project structure; a server started before the move to `src/app` can retain stale routes. Add the PATH line to your shell configuration if you want it to persist. `.nvmrc` is provided for developers who already use nvm. `npm install` also works; CI uses the committed lockfile with `npm ci`.
 
 Git, Terraform, AWS CLI, GitHub CLI, and Homebrew were present at initial inspection. Node and npm were missing from PATH. Terraform and AWS credentials are not needed to run this milestone. The existing local directory and Git repository were retained; the package/project is named `austindennis-dev`.
 
@@ -37,7 +47,7 @@ npm run check
 
 `npm run format` applies formatting. The build exports the site to `out/`; there is no production Node server and `next start` is not used. Preview with any static file server that serves directory indexes (for example `python3 -m http.server 3000 --directory out`). Test deep links directly, including `/projects/terralift/`, and verify unknown paths return 404. Local preview does not emulate CloudFront headers or rewrites.
 
-Tests focus on publication gating, content validation, project lookup, case-study outlines, and safe Markdown rendering. CI runs install, lint, formatting, type checking, tests, production export, and a production dependency audit. GitHub execution requires publishing this repository; no remote or deployment is configured.
+The seven automated tests cover publication gating, content validation, project lookup, complete and placeholder case studies, and safe Markdown rendering. Lint, formatting, strict type checking, tests, and production export passed at the session close. Local page routes and unknown-route 404 handling were verified. Owner site review is complete; dedicated keyboard, mobile viewport, and automated accessibility checks remain launch follow-ups. CI runs install, lint, formatting, type checking, tests, production export, and a production dependency audit. GitHub execution requires publishing this repository; no remote or deployment is configured.
 
 ## Stack and structure
 
@@ -62,7 +72,7 @@ The headshot is stored once at `public/images/austin-dennis.jpeg`. Generated `.n
 
 ## Content
 
-Edit `src/content/projects.ts` to update systems and approved case-study sections. Long-form project case studies live in `src/content/case-studies/`. Case-study sections support Markdown with raw HTML disabled. Link technical claims to the reviewed source revision. Missing sections visibly say content pending. Do not add proprietary details. Add only confirmed credentials to `src/content/expertise.ts`; the data model supports earned, in progress, and planned. Contact details and further biography await owner input.
+Edit `src/content/projects.ts` to update systems and approved case-study sections. Long-form project case studies live in `src/content/case-studies/`. Case-study sections support Markdown with raw HTML disabled. Link technical claims to the reviewed source revision for public projects. Keep Bank Vault Academy’s case study at a public-safe level without linking internal source. Missing sections visibly say content pending. Do not add proprietary details. Add only confirmed credentials to `src/content/expertise.ts`; the data model supports earned, in progress, and planned. LinkedIn is the current public contact channel. A public email link, additional biography, and certification records remain optional content follow-ups. The repository commit email is not automatically treated as a public contact address.
 
 Writing is Markdown with a fenced JSON metadata block. Copy `src/content/writing/first-article.md`, use a lowercase hyphenated filename, supply title, summary and ISO date, and set `published` to true only after review. Drafts are excluded from routes, indexes, and sitemap. The optional catch-all writing route allows an empty publication list without inventing an article. Raw HTML is disabled, and React Markdown filters unsafe URLs. No MDX execution or runtime CMS is needed. Draft source is still visible in this public repository: never put private drafts or secrets here.
 
@@ -80,4 +90,4 @@ See [SECURITY.md](SECURITY.md). Enable private reporting, secret scanning, push 
 
 ## Roadmap
 
-See [the running roadmap](docs/roadmap.md). The first milestone covers local development and validation. Subsequent milestones supply reviewed content, bootstrap AWS/state, build the static delivery infrastructure, then add OIDC deployment and operational checks. API Gateway/Lambda/SES are deferred until a contact form is needed; DynamoDB requires a real persistence need. EC2, ECS, and EKS are not justified for this workload.
+See [the running roadmap](docs/roadmap.md). Next session should focus on GitHub publication and repository security controls, followed by remaining accessibility checks and the first technical article. AWS account/state bootstrap, hosting infrastructure, and OIDC deployment are separate milestones requiring explicit approval. API Gateway/Lambda/SES are deferred until a contact form is needed; DynamoDB requires a real persistence need. EC2, ECS, and EKS are not justified for this workload.
