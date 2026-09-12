@@ -371,11 +371,15 @@ p {
   margin-bottom: 16px;
 }
 .credential-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  column-gap: 32px;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 .credential-list li {
+  min-width: 0;
   padding: 20px 0;
   border-bottom: 1px solid var(--border);
   overflow-wrap: anywhere;
