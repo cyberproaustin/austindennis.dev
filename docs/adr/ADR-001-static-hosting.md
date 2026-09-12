@@ -1,7 +1,8 @@
 # ADR-001: Static Next.js hosting with CloudFront and private S3
 
-- Status: Accepted for implementation; AWS deployment deferred
+- Status: Accepted and implemented
 - Date: 2026-09-10
+- Implementation update: 2026-09-12
 
 ## Context
 
@@ -9,7 +10,7 @@ The initial workload is a public portfolio with project case studies and Git-mai
 
 ## Decision
 
-Export Next.js App Router pages at build time and serve them through CloudFront from a private S3 REST origin using OAC. Manage future AWS infrastructure in Terraform. Keep the initial milestone entirely local.
+Export Next.js App Router pages at build time and serve them through CloudFront from a private S3 REST origin using OAC. Manage AWS infrastructure in Terraform. The initial local milestone has since been deployed; development remains local.
 
 ## Alternatives considered
 

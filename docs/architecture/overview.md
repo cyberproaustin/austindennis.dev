@@ -1,46 +1,35 @@
 # Architecture overview
 
-Status: local application implemented; AWS architecture proposed, no resources deployed.
+Status: deployed at https://austindennis.dev. Infrastructure is managed with Terraform; site releases run through a manual GitHub Actions workflow.
 
-```mermaid
-flowchart LR
-  U[Browser] --> D[Route 53 DNS lookup]
-  U --> C[CloudFront HTTPS]
-  C -->|OAC signed origin request| S[Private S3 REST origin]
-  G[GitHub Actions - future] -->|OIDC| T[AWS STS]
-  T --> R[Scoped IAM role]
-  R -->|Publish static output| S
-```
+Next.js exports HTML, CSS, JavaScript, route payloads, and metadata into `out/`. Public routes are generated at build time. There is no production Node server, application database, or runtime API. Development stays local.
 
-Next.js builds HTML, CSS, JavaScript, and metadata into `out/`. Every public project/article route is generated at build time. There are no server actions, runtime APIs, database, credentials, tracking scripts, or remote fonts. App Router components default to server rendering at build time; navigation is the small client boundary for current-page state.
+## Hosting and routing
 
-This matches the portfolio workload: inexpensive distribution, a small runtime attack surface, and a meaningful infrastructure/delivery learning project. See [ADR-001](../adr/ADR-001-static-hosting.md).
+Route 53 resolves the apex and www names to CloudFront. ACM supplies the certificate in `us-east-1`. CloudFront signs origin requests through OAC to a private S3 REST endpoint. Public access is blocked, ownership is bucket-enforced, and the bucket policy requires TLS and scopes CloudFront read access to the distribution.
 
-## Hosting requirements, not yet implemented
+CloudFront redirects HTTP to HTTPS. A viewer-request function redirects www to the apex and extensionless paths to trailing slashes, preserving query strings. Directory requests resolve to `index.html`; asset and RSC file paths remain intact. Origin 403 and 404 responses use the exported `/404.html` with HTTP 404. The owner verified deployed nested routes, redirects, and unknown-route status.
 
-- Route 53 aliases point to CloudFront. Validate an ACM certificate in us-east-1 for CloudFront.
-- Use a private S3 REST endpoint with Block Public Access and bucket-owner-enforced ownership. Grant only CloudFront service access scoped to the distribution ARN through OAC; require TLS. Do not enable website hosting.
-- Redirect viewer HTTP to HTTPS. Choose a current supported TLS security policy at deployment.
-- `trailingSlash: true` emits `/route/index.html`. A viewer-request CloudFront Function must canonicalize extensionless paths to trailing slashes and resolve directory requests to `index.html`. The default root object alone does not fix nested paths. Preserve asset/RSC requests and query strings; test both hard reloads and client navigation against the actual export.
-- Map missing-origin objects (S3 can return 403 for missing keys) to the exported 404 page with HTTP 404, never an index-page 200 fallback.
-- Cache hashed `_next/static` assets immutably; give HTML and route payloads short TTLs or invalidate after publishing. Upload assets before HTML, preserve prior assets across a retention window, and keep a release manifest for rollback.
+## Delivery and caching
+
+The manual workflow runs on `main`, checks and builds the application, and uploads a retained build artifact. The deploy job obtains short-lived credentials through GitHub OIDC and a scoped IAM role. Trust checks the audience and exact subject containing the owner/repository IDs and main branch. The role has site publishing and distribution invalidation permissions, without infrastructure or state administration.
+
+Hashed assets upload first with immutable one-year caching. Supporting files and HTML use `max-age=0,must-revalidate`; HTML uploads last. The cache policy permits zero TTL. A full invalidation follows publication and the workflow waits for completion.
+
+Uploads are not atomic. Artifacts are retained for 14 days and noncurrent S3 versions for 30 days. Old objects are not deleted during deployment. Tested rollback and cleanup of obsolete objects remain follow-ups.
 
 ## HTTP security headers
 
-Implement a CloudFront response headers policy for HSTS after HTTPS verification, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, and a Permissions-Policy disabling unused camera/microphone/geolocation features. Use CSP `frame-ancestors 'none'`, `object-src 'none'`, and `base-uri 'self'`.
+CloudFront supplies HSTS, nosniff, frame denial, a strict-origin-when-cross-origin referrer policy, and a Permissions-Policy disabling camera, microphone, and geolocation. The current CSP is deliberately limited to `base-uri 'self'; object-src 'none'; frame-ancestors 'none';`.
 
-CSP is a deployment gate: inspect the actual generated inline Next.js scripts, generate permitted hashes per release, and validate route navigation under a report-only policy before enforcement. A static export cannot issue a fresh request nonce. Do not copy an untested `script-src 'self'` policy that breaks hydration or weaken it silently with unsafe-inline. Keep headers within CloudFront limits; document the final design in an ADR.
+Script restrictions are not implemented. A stricter CSP needs inspection of the generated inline Next.js scripts and validation of hydration and navigation. Static export cannot supply per-request nonces. Do not describe the baseline policy as comprehensive script protection.
 
-## Identity and state
+## State and operations
 
-Future OIDC trust must check audience sts.amazonaws.com and an exact repository plus approved branch or protected GitHub environment subject. Separate infrastructure administration from object publishing; restrict object access to the target bucket and invalidation to the target distribution. No long-lived AWS keys in GitHub.
+Production state uses a separately bootstrapped encrypted, versioned S3 bucket with native locking. The owner administers infrastructure through IAM Identity Center and applies Terraform separately from content releases. Development has no AWS resources.
 
-Bootstrap encrypted, versioned S3 state deliberately with native `use_lockfile` locking. Separate environment state and access. Commit provider lockfiles once providers are introduced; keep state, plans, and real variable values private.
+A USD 50 account budget is owner-confirmed; the USD 5 tag-filtered project budget still needs confirmation. Monitoring, recovery drills, repository protections, and dedicated accessibility checks are tracked in the [roadmap](../roadmap.md). See the [infrastructure guide](../../infrastructure/README.md) for operational details and [ADR-001](../adr/ADR-001-static-hosting.md) for the hosting decision.
 
-## Operations and future backend
+## Future backend
 
-Before launch define budget alerts, CloudFront error/traffic alarms, logging with minimal retention and privacy controls, release rollback, DNS recovery, and ownership. Review static output for sensitive data before publishing.
-
-Only when needed, a contact endpoint may use API Gateway → Lambda → SES. Validate payload size/schema, rate-limit abuse, restrict CORS, prevent mail header injection, and define retention before collecting data. Add DynamoDB only with a documented persistence requirement.
-
-References: [Next.js static export](https://nextjs.org/docs/app/guides/static-exports), [CloudFront OAC](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html), [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3).
+A contact endpoint may eventually use API Gateway, Lambda, and SES if needed. Validation, abuse controls, and retention must be designed before collecting data. Persistence or continuously running compute requires a concrete feature need.

@@ -10,7 +10,7 @@ export const clouds: { name: Cloud; label: string; description: string }[] = [
     name: "Amazon Web Services",
     label: "EXPANDING INTO",
     description:
-      "Building AWS depth through this portfolio’s planned static hosting and delivery platform.",
+      "Building AWS depth through this portfolio’s live S3 and CloudFront hosting, managed with Terraform and deployed through GitHub Actions.",
   },
   {
     name: "Google Cloud",
