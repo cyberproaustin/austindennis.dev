@@ -21,6 +21,20 @@ describe("credential presentation", () => {
     ).not.toContain("Expires");
   });
 
+  it("keeps current credentials visible and background credentials collapsed", () => {
+    const html = renderToStaticMarkup(<CertificationList />);
+    const [current = "", background = ""] = html.split(
+      '<details class="credential-background">',
+    );
+    expect(current).toContain("Associate of ISC2");
+    expect(current).toContain("DevOps Engineer Expert");
+    expect(current.match(/<li>/g)).toHaveLength(13);
+    expect(background.match(/<li>/g)).toHaveLength(13);
+    expect(background).toContain("Linux Essentials");
+    expect(background).toContain("Tenable Cloud Security Administrator");
+    expect(html).not.toMatch(/<details[^>]*\bopen/);
+  });
+
   it("separates associate status and renders no invented verification links", () => {
     const html = renderToStaticMarkup(<CertificationList />);
     expect(html).toContain("Associate of ISC2");

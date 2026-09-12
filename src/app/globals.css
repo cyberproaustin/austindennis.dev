@@ -655,3 +655,16 @@ p {
     transition: none !important;
   }
 }
+
+.credential-background summary {
+  cursor: pointer;
+  color: var(--accent);
+  padding: 12px 0;
+}
+.credential-background summary:hover {
+  text-decoration: underline;
+}
+.credential-background summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
