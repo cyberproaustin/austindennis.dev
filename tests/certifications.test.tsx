@@ -26,6 +26,17 @@ describe("credential presentation", () => {
     const [current = "", background = ""] = html.split(
       '<details class="credential-background">',
     );
+    const [expert = "", remaining = ""] = current.split(
+      '<section aria-labelledby="credentials-current">',
+    );
+    expect(expert).toContain("Expert Credentials");
+    expect(expert.match(/<li>/g)).toHaveLength(3);
+    expect(expert).toContain("DevOps Engineer Expert");
+    expect(expert).toContain("Azure Solutions Architect Expert");
+    expect(expert).toContain("Cybersecurity Architect Expert");
+    expect(remaining.match(/<li>/g)).toHaveLength(10);
+    expect(remaining).toContain("Associate of ISC2");
+    expect(remaining).not.toContain("DevOps Engineer Expert");
     expect(current).toContain("Associate of ISC2");
     expect(current).toContain("DevOps Engineer Expert");
     expect(current.match(/<li>/g)).toHaveLength(13);

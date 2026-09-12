@@ -39,14 +39,19 @@ export function CredentialDates({ credential }: { credential: Certification }) {
 }
 
 function CredentialEntries({
-  emphasis,
+  group,
 }: {
-  emphasis: Certification["emphasis"];
+  group: "expert" | "current" | "background";
 }) {
   return (
     <ul className="credential-list">
       {certifications
-        .filter((credential) => credential.emphasis === emphasis)
+        .filter((credential) => {
+          if (group === "expert") return credential.featured;
+          if (group === "current")
+            return credential.emphasis === "current" && !credential.featured;
+          return credential.emphasis === "background";
+        })
         .sort((a, b) => b.issuedOn.localeCompare(a.issuedOn))
         .map((credential) => (
           <li key={credential.id}>
@@ -76,12 +81,16 @@ function CredentialEntries({
 export function CertificationList() {
   return (
     <div className="credential-groups">
+      <section aria-labelledby="credentials-expert">
+        <h3 id="credentials-expert">Expert Credentials</h3>
+        <CredentialEntries group="expert" />
+      </section>
       <section aria-labelledby="credentials-current">
         <h3 id="credentials-current">Current focus</h3>
         <p className="credential-note">
           Cloud platforms, secure delivery, and security engineering.
         </p>
-        <CredentialEntries emphasis="current" />
+        <CredentialEntries group="current" />
       </section>
       <section aria-labelledby="credentials-background">
         <h3 id="credentials-background">Background and foundations</h3>
@@ -91,7 +100,7 @@ export function CertificationList() {
         </p>
         <details className="credential-background">
           <summary>View additional credentials</summary>
-          <CredentialEntries emphasis="background" />
+          <CredentialEntries group="background" />
         </details>
       </section>
     </div>
