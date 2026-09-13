@@ -88,7 +88,7 @@ The **Deploy portfolio** GitHub Actions workflow runs manually on `main`. It val
 
 The deployment role is scoped to the site bucket and distribution, with no Terraform state access. CloudFront supplies HTTPS redirects and security headers, including a baseline CSP. A stricter script policy, tested rollback, and monitoring are still pending. No long-lived AWS keys are used by the workflow.
 
-See [SECURITY.md](SECURITY.md) and the [production checklist](docs/runbooks/production-readiness.md). Repository protection and security feature configuration still need confirmation. Dependabot updates are reviewed before merging.
+See [SECURITY.md](SECURITY.md) and the [production checklist](docs/runbooks/production-readiness.md). GitHub private vulnerability reporting is enabled. Branch protection, required CI checks, and available secret scanning/push protection still need confirmation. Dependabot updates are reviewed before merging.
 
 ## Roadmap
 

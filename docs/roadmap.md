@@ -38,7 +38,8 @@ Updated September 12, 2026. The site is live on AWS, GitHub CI and manual OIDC d
 ## Publication and operations
 
 - [x] Publish the repository at `cyberproaustin/austindennis.dev` and verify GitHub CI.
-- [ ] Confirm private security reporting, available secret-scanning/push-protection features, branch protection, and required CI checks.
+- [x] Enable GitHub private vulnerability reporting (owner-confirmed).
+- [ ] Confirm available secret-scanning/push-protection features, branch protection, and required CI checks.
 - [ ] Complete dedicated keyboard, mobile viewport, and automated accessibility checks. Owner review is in progress.
 
 ## AWS platform

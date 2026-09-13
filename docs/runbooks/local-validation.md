@@ -1,5 +1,7 @@
 # Initial local validation
 
+This is a historical record of the initial local milestone, not the current deployment status. The site has since been published and deployed to AWS, and GitHub CI and deployment workflows have passed. See the [roadmap](../roadmap.md) and [production checklist](production-readiness.md) for current status.
+
 Validated on macOS arm64, 2026-09-10 (local time), with an official Node.js 24.21.0 archive extracted to `/tmp`. Its SHA-256 matched the official distribution checksum. No system Node installation was changed.
 
 - Dependency installation succeeded; `npm ci --ignore-scripts` also verified lockfile reproducibility.

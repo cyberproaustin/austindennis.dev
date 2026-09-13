@@ -14,7 +14,8 @@ The site is live. The owner controls Terraform applies and manual GitHub Actions
 ## Remaining
 
 - [ ] Confirm the USD 5 project budget after cost allocation tag activation.
-- [ ] Confirm private security reporting, available secret scanning/push protection, branch protection, and required CI checks.
+- [x] Enable GitHub private vulnerability reporting (owner-confirmed).
+- [ ] Confirm available secret scanning/push protection, branch protection, and required CI checks.
 - [ ] Verify keyboard navigation, mobile layouts, automated accessibility, link integrity, metadata, and performance on the deployed site.
 - [ ] Test cache behavior across a release, including client navigation and previously loaded pages.
 - [ ] Design and test a stricter script CSP against the static export.
