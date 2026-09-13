@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const links = [
+  ["/about/", "About"],
   ["/projects/", "Systems"],
   ["/expertise/", "Expertise"],
   ["/writing/", "Writing"],
-  ["/about/", "About"],
   ["/contact/", "Contact"],
 ] as const;
 export function Navigation() {
